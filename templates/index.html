@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Writing Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>AI Writing Assistant</h1>
+    <textarea id="user-input" placeholder="Type your text here..."></textarea>
+    
+    <div>
+        <button onclick="processText('grammar')">Correct Grammar</button>
+        <button onclick="processText('generation')">Generate Text</button>
+    </div>
+
+    <div>
+        <select id="language">
+            <option value="French">French</option>
+            <option value="Spanish">Spanish</option>
+            <option value="German">German</option>
+            <option value="Japanese">Japanese</option>
+        </select>
+        <button onclick="translateText()">Translate</button>
+    </div>
+
+    <div>
+        <select id="tone">
+            <option value="formal">Formal</option>
+            <option value="casual">Casual</option>
+            <option value="professional">Professional</option>
+        </select>
+        <button onclick="adjustTone()">Adjust Tone</button>
+    </div>
+
+    <div>
+        <button onclick="summarizeText()">Summarize</button>
+    </div>
+
+    <h2>Output</h2>
+    <div id="output"></div>
+
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <script>
+        async function processText(task) {
+            const text = document.getElementById("user-input").value;
+            const response = await fetch("/process", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, task }),
+            });
+            const data = await response.json();
+            document.getElementById("output").innerText = data.result || data.error;
+        }
+
+        async function translateText() {
+            const text = document.getElementById("user-input").value;
+            const language = document.getElementById("language").value;
+            const response = await fetch("/translate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, language }),
+            });
+            const data = await response.json();
+            document.getElementById("output").innerText = data.result || data.error;
+        }
+
+        async function adjustTone() {
+            const text = document.getElementById("user-input").value;
+            const tone = document.getElementById("tone").value;
+            const response = await fetch("/adjust_tone", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, tone }),
+            });
+            const data = await response.json();
+            document.getElementById("output").innerText = data.result || data.error;
+        }
+
+        async function summarizeText() {
+            const text = document.getElementById("user-input").value;
+            const response = await fetch("/summarize", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text }),
+            });
+            const data = await response.json();
+            document.getElementById("output").innerText = data.result || data.error;
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
+</body>
+</html>
